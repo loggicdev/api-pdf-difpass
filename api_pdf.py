@@ -270,6 +270,10 @@ if __name__ == "__main__":
     
     def find_free_port():
         """Encontra uma porta livre para o servidor"""
+        # Em produção (Docker), usar porta 8000. Em desenvolvimento, procurar porta livre
+        if os.getenv("DOCKER_CONTAINER"):
+            return 8000
+            
         for port in [8000, 8001, 8002, 8003, 8004]:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 try:
@@ -279,9 +283,11 @@ if __name__ == "__main__":
                     continue
         return 8000  # fallback
     
-    port = find_free_port()
-    print(f"🚀 Iniciando servidor na porta {port}")
+    port = int(os.getenv("PORT", find_free_port()))
+    host = os.getenv("HOST", "0.0.0.0")
+    
+    print(f"🚀 Iniciando servidor em {host}:{port}")
     print(f"📝 Documentação: http://localhost:{port}/docs")
     print(f"🔄 ReDoc: http://localhost:{port}/redoc")
     
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host=host, port=port)
