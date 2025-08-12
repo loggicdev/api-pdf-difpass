@@ -143,7 +143,8 @@ def create_pdf_shell_and_insert_content_core(
             img.putalpha(mask)
             
             # Salvar temporariamente
-            temp_img_path = f"/tmp/gradient_{os.getpid()}.png"
+            import tempfile
+            temp_img_path = os.path.join(tempfile.gettempdir(), f"gradient_{os.getpid()}.png")
             img.save(temp_img_path, "PNG")
             print(f"💾 Gradiente salvo em: {temp_img_path}")
             
@@ -264,6 +265,10 @@ async def generate_pdf_shell(
             shutil.rmtree(temp_dir)
 
 
+# Handler para Vercel - a instância do app já é suficiente
+# A Vercel irá usar diretamente a variável 'app'
+
+# Para desenvolvimento local
 if __name__ == "__main__":
     import uvicorn
     import socket
